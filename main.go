@@ -21,7 +21,7 @@ func main() {
 	router.HandleFunc("/user", deleteUser).Methods("DELETE")
 
 	// TRANSAKSI
-	// router.HandleFunc("/gettransaksi", getAllTransaksi).Methods("GET")
+	router.HandleFunc("/gettransaksi", getAllTransaksi).Methods("GET")
 	// router.HandleFunc("/transaksi", insertTransaksi).Methods("POST")
 	// router.HandleFunc("/transaksi", updateTransaksi).Methods("PUT")
 	// router.HandleFunc("/transaksi", deleteTransaksi).Methods("DELETE")

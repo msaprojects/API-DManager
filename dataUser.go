@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+//GET ALL DATA USER
 func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	var user Users
 	var arr_user []Users
@@ -40,6 +41,7 @@ func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// INSERT DATA USER
 func insertUser(w http.ResponseWriter, r *http.Request) {
 
 	var response ResponseUser
@@ -76,6 +78,7 @@ func insertUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// UPDATE DATA USER
 func updateUser(w http.ResponseWriter, r *http.Request) {
 
 	var response ResponseUser
@@ -114,6 +117,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// DELETE DATA USER
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 	var response ResponseUser
