@@ -14,6 +14,7 @@ func main() {
 	http.HandleFunc("/login", Login)
 	http.HandleFunc("/dashboard", getDashboard)
 	http.HandleFunc("/transaksidashboard", getAllTransaksiDashboard)
+	http.HandleFunc("/transaksiblmaccfinance", getAllTransaksiBlmAccFinance)
 	// DATA
 	http.HandleFunc("/user", getAllUsers)
 	http.HandleFunc("/useri", UserInsert)
@@ -41,7 +42,7 @@ func getDashboard(w http.ResponseWriter, r *http.Request) {
 	db := connect()
 	defer db.Close()
 
-	rows, err := db.Query("select count(idtransaksi) as jmlberkas, (select count(idtransaksi) from transaksi where status='Publish') as jmlpublish, (select count(idtransaksi) from transaksi where finance_user='') as jmltgsfinance from transaksi;")
+	rows, err := db.Query("select count(idtransaksi) as jmlberkas, (select count(idtransaksi) from transaksi where status='Publish') as jmlpublish, (select count(idtransaksi) from transaksi where finance_biaya='' || finance_biaya='0' ) as jmltgsfinance from transaksi;")
 	if err != nil {
 		log.Print(err)
 	}
@@ -75,6 +76,50 @@ func getAllTransaksiDashboard(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	rows, err := db.Query("select f.idtransaksi, f.nama_tes, f.keterangan, f.tgl_tes, f.lokasi, f.peminta_tes, c.nama as customer, f.finance_user, f.finance_biaya, f.finance_tgl, f.file, f.status, f.iduser from transaksi f, customer c where f.idcustomer=c.idcustomer and status = 'Publish';")
+	if err != nil {
+		log.Print(err)
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&transaksi.IdTransaksi,
+			&transaksi.Nama_Tes,
+			&transaksi.Keterangan,
+			&transaksi.Tanggal_Tes,
+			&transaksi.Lokasi,
+			&transaksi.Peminta_Tes,
+			&transaksi.Customer,
+			&transaksi.Finance_User,
+			&transaksi.Finance_Biaya,
+			&transaksi.Finance_Tgl,
+			&transaksi.File,
+			&transaksi.Status,
+			&transaksi.IdUser,
+		); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arr_transaksi = append(arr_transaksi, transaksi)
+		}
+	}
+
+	response.Status = 1
+	response.Message = "Success"
+	response.Result = arr_transaksi
+	log.Print("Request Data Transaksi")
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func getAllTransaksiBlmAccFinance(w http.ResponseWriter, r *http.Request) {
+	var transaksi Transaksi
+	var arr_transaksi []Transaksi
+	var response ResponseTransaksi
+
+	db := connect()
+	defer db.Close()
+
+	rows, err := db.Query("select f.idtransaksi, f.nama_tes, f.keterangan, f.tgl_tes, f.lokasi, f.peminta_tes, c.nama as customer, f.finance_user, f.finance_biaya, f.finance_tgl, f.file, f.status, f.iduser from transaksi f, customer c where f.idcustomer=c.idcustomer and finance_biaya='';")
 	if err != nil {
 		log.Print(err)
 	}
@@ -388,7 +433,7 @@ func UbahTransaksi(w http.ResponseWriter, request *http.Request) {
 	)
 	response.Status = 1
 	response.Message = "Success Add"
-	log.Print("Tambah Data Transaksi")
+	log.Print("Ubah Data Transaksi")
 }
 
 //END TRANSAKSI
@@ -471,7 +516,7 @@ func CustomerUpdate(w http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	_, err = db.Exec("UPDATE customer nama = ?, alamat = ?, notelp = ?, cp = ?, kodesistem = ?, aktif = ? WHERE idcustomer = ?",
+	_, err = db.Exec("UPDATE customer set nama = ?, alamat = ?, notelp = ?, cp = ?, kodesistem = ?, aktif = ? WHERE idcustomer = ?",
 		c.NAMA,
 		c.ALAMAT,
 		c.NOTELP,
@@ -482,7 +527,7 @@ func CustomerUpdate(w http.ResponseWriter, request *http.Request) {
 	)
 	response.Status = 1
 	response.Message = "Success Add"
-	log.Print("Update Data Customer")
+	log.Print("Update Data Customer", err)
 }
 
 // DELETE DATA CUSTOMER
