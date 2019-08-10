@@ -2,12 +2,28 @@ package main
 
 import "database/sql"
 
+type Dashboard struct {
+	JMLBERKAS       int `from:"jmlberkas" json:"jmlberkas"`
+	JMLPUBLISH      int `from:"jmlpublish" json:"jmlpublish"`
+	JMLTUGASFINANCE int `from:"jmltgsfinance" json:"jmltgsfinance"`
+}
+
+type Customers struct {
+	IDCUSTOMER int    `from:"idcustomer" json:"idcustomer"`
+	NAMA       string `from:"nama" json:"nama"`
+	ALAMAT     string `from:"alamat" json:"alamat"`
+	NOTELP     string `from:"notelp" json:"notelp"`
+	CP         string `from:"cp" json:"cp"`
+	KODESISTEM string `from:"kodesistem" json:"kodesistem"`
+	AKTIF      int    `from:"aktif" json:"aktif"`
+}
+
 type Users struct {
-	IdUser   string `form:"iduser" json:"iduser"`
+	IdUser   int    `form:"iduser" json:"iduser"`
 	Nama     string `form:"nama" json:"nama"`
 	Jabatan  string `form:"jabatan" json:"jabatan"`
 	Password string `form:"password" json:"password"`
-	Aktif    string `form:"aktif" json:"aktif"`
+	Aktif    int    `form:"aktif" json:"aktif"`
 }
 
 type Transaksi struct {
@@ -23,7 +39,8 @@ type Transaksi struct {
 	Finance_Biaya string         `form:"finance_biaya" json:"finance_biaya"`
 	File          sql.NullString `form:"file" json:"file"`
 	Status        string         `form:"status" json:"status"`
-	IdUser        string         `form:"iduser" json:"iduser"`
+	IdUser        int            `form:"iduser" json:"iduser"`
+	IDCUSTOMER    int            `form:"idcustomer" json:"idcustomer"`
 }
 
 type ResponseUser struct {
@@ -36,4 +53,16 @@ type ResponseTransaksi struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 	Result  []Transaksi
+}
+
+type ResponseCustomer struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+	Result  []Customers
+}
+
+type ResponseDashboard struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+	Result  []Dashboard
 }
